@@ -1,20 +1,33 @@
 
 import dom
+import sugar
 
-import canvas
+import helper/browser
+import helper/canvas2d
+import helper/sprite
 
-when isMainModule:
-  echo("Hello, World!")
-
-proc drawRect(ctx: CanvasContext2d) =
-  ctx.beginPath()
-  ctx.fillStyle = ("rgb(" & $100 & "," & $200 & "," & $50 & ")")
-  ctx.fillRect(10,20,30,40)
-  ctx.closePath()
+import game
+import common
 
 dom.window.onload = proc (e: dom.Event) =
-  echo "onload"
-  let c = dom.document.getElementById("canvas").Canvas
-  let ctx = c.getContext2d()
-  ctx.drawRect()
+  let
+    c = dom.document.getElementById("canvas").Canvas
+    loading = dom.document.getElementById("loading")
+    ctx = c.getContext()
+    pixelRatio = window.devicePixelRatio
+  # ctx.imageSmoothingEnabled = false
+  pixelRatio.setPixelRatio()
+  c.adjustForPixelratio(CANVAS_WIDTH,CANVAS_HEIGHT)
+
+  c.style.background =
+    "center center / cover no-repeat url(\"img/stars.jpg\")".cstring
+  c.style.borderStyle = "solid".cstring
+
+  var gameRef = newGame(ctx)
+  gameRef.init()
+  loading.style.width = "0px"
+  loading.style.height = "0px"
+  addDocEventListener "keydown", (e: Event) => gameRef.keydown(e.KeyEvent)
+  addDocEventListener "keyup", (e: Event) => gameRef.keyup(e.KeyEvent)
+  rafDt((dt: float) => gameRef.tick(dt))
 
