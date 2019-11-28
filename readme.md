@@ -7,6 +7,14 @@ An asteroids game written to learn nim.  Written targeting the js backend.
 
 ## Controls
 
+* Arrow Keys or WASD move the player ship.
+* Spacebar fires the disruptor and unpauses the game.
+* Escape starts a new game.
+* Enter unpauses and pauses the game.
+* While paused, press Left and Right to time travel.
+* While paused, press Down to save to browser local storage.
+
+
 ## Objectives
 
 ## Attributions
@@ -19,4 +27,4 @@ An asteroids game written to learn nim.  Written targeting the js backend.
 
 ## Developers
 
-This was developed using the [Nim programming language](https://nim-lang.org/), so you'll need it to work on this.
+This was developed using the [Nim programming language](https://nim-lang.org/), so you'll need it to work on this.  You'll also need the [terser](https://github.com/terser-js/terser) tool to minimize the produced javascript.
