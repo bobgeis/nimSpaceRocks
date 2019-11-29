@@ -57,13 +57,13 @@ func getImgColors(kind: BoomKind, life: int): (string,string) =
   of xkEx:
     return (
       hsl(
-        30 + 30 * ratio,
+        5 + 40 * ratio,
         100,
         70 + 30 * ratio,
-        0.15 + 0.85 * ratio * ratio,
+        0.1 + 0.9 * ratio,
       ),
       hsl(
-        10 + 50 * ratio,
+        5 + 40 * ratio,
         100,
         50 + 50 * ratio,
         0.5 + 0.5 * ratio,
@@ -75,13 +75,13 @@ func getImgColors(kind: BoomKind, life: int): (string,string) =
         200,
         100,
         70 + 30 * ratio,
-        0.05 + 0.95 * ratio * ratio,
+        1.0 * ratio * ratio,
       ),
       hsl(
         200,
         100,
         40 + 60 * ratio,
-        0.25 + 0.75 * ratio,
+        1.0 * ratio,
       )
     )
   of xkIn:
@@ -90,13 +90,13 @@ func getImgColors(kind: BoomKind, life: int): (string,string) =
         200,
         100,
         100 - 30 * ratio,
-        0.05 + 0.95 * (1 - ratio) * (1 - ratio),
+        1.0 * (1 - ratio) * (1 - ratio),
       ),
       hsl(
         200,
         100,
         100 - 60 * ratio,
-        0.25 + 0.75 * (1 - ratio),
+        1.0 * (1 - ratio),
       )
     )
 
