@@ -69,6 +69,28 @@ proc newGame*(ctx: Context): Game =
     dt: 16,
   )
 
+proc saveHiScore(game: Game) =
+  ## Save the current hiscore to localstorage
+  localStorage.setItem("nimSpaceRocks-hiscore",stringify(Flatted, game.hiscore))
+
+proc saveCurrentScene(game: Game) =
+  ## Save the current scene and rock shapes to localstorage
+  let sceneString = if isNow(): stringify(Flatted, game.scene)
+    else: game.timeline.getTimeTargetString()
+  localStorage.setItem("nimSpaceRocks-scene",sceneString)
+  localStorage.setItem("nimSpaceRocks-rockPoints",stringify[RockPoints](Flatted, rockPoints))
+
+proc loadHiScore(): array[0..3,int] =
+  ## load any previously saved hiscore
+  parse[array[4,int]](Flatted, localStorage.getItem("nimSpaceRocks-hiscore"))
+
+proc loadSavedScene(): (Scene,RockPoints,) =
+  ## Load data from local storage if possible.
+  (
+    parse[Scene](Flatted, localStorage.getItem("nimSpaceRocks-scene")),
+    parse[RockPoints](Flatted, localStorage.getItem("nimSpaceRocks-rockPoints")),
+  )
+
 proc update[Obj](objs: var seq[Obj]) =
   ## update each of a sequence of objects
   var cull: seq[int] = @[]
@@ -124,6 +146,11 @@ proc updateHiScore(game: var Game) =
   game.hiscore[1] = max(game.hiscore[1], game.scene.delivered[lkGem])
   game.hiscore[2] = max(game.hiscore[2], game.scene.rocksBusted)
   game.hiscore[3] = max(game.hiscore[3], game.scene.shipsSafe)
+  try:
+    echo "Saving hiscore"
+    game.saveHiScore()
+  except:
+    echo "Local storage could not be accessed."
 
 
 proc draw(game: Game) =
@@ -132,12 +159,11 @@ proc draw(game: Game) =
   case game.mode
   of modePlay:
     game.ctx.draw(game.scene)
-    game.ctx.draw(game.timeline)
     game.ctx.drawScore(game.scene)
   of modePause:
     if isNow():
       game.ctx.draw(game.scene)
-      game.ctx.draw(game.timeline)
+      game.ctx.drawScore(game.scene)
       game.ctx.drawHiScore(game.hiscore)
       if game.drawHelp:
         game.ctx.drawInstructions()
@@ -148,8 +174,8 @@ proc draw(game: Game) =
       for f in fs:
         game.ctx.drawFuture(f)
       game.ctx.draw(game.timetarget)
-    game.ctx.drawScore(game.timetarget)
-    game.ctx.draw(game.timeline)
+      game.ctx.drawScore(game.timetarget)
+  game.ctx.draw(game.timeline)
   when not defined(release):
     game.ctx.drawFPS(game.dt)
 
@@ -206,11 +232,7 @@ proc applyKeyDown(game: var Game, key: string) =
     of "s", "ArrowDown":
       try:
         echo "Saving current scene"
-        let sceneString = if isNow(): stringify(Flatted, game.scene)
-          else: game.timeline.getTimeTargetString()
-        localStorage.setItem("nimSpaceRocks-scene",sceneString)
-        localStorage.setItem("nimSpaceRocks-hiscore",stringify(Flatted, game.hiscore))
-        localStorage.setItem("nimSpaceRocks-rockPoints",stringify[RockPoints](Flatted, rockPoints))
+        game.saveCurrentScene()
       except:
         echo "Local storage could not be accessed."
     else: return
@@ -281,24 +303,22 @@ proc tick*(game: var Game, dt: float) =
 
 proc init*(game: var Game) =
   ## Call initialization functions
-  var
-    restoredScene: Scene
-    restoredHiScore: array[4,int]
-    restoredRockPoints: RockPoints
   try:
-    restoredScene = parse[Scene](Flatted, localStorage.getItem("nimSpaceRocks-scene"))
-    restoredHiScore = parse[array[4,int]](Flatted, localStorage.getItem("nimSpaceRocks-hiscore"))
-    restoredRockPoints = parse[RockPoints](Flatted, localStorage.getItem("nimSpaceRocks-rockPoints"))
+    let restoredHiScore = loadHiScore()
+    game.hiscore = restoredHiScore
+    echo "Loaded saved hiscores from localStorage."
   except:
-    echo "Saved values could not be retrieved from local storage."
-  if not restoredScene.isNil:
+    echo "Could not load hiscores from localStorage."
+  try:
+    let (restoredScene,restoredRockPoints) = loadSavedScene()
     game.scene = restoredScene
     game.timetarget = restoredScene
     game.timeline.push restoredScene
     game.mode = modePause
-    game.hiscore = restoredHiScore
     rock.init(restoredRockPoints)
-  else:
+    echo "Loaded saved scene from localStorage."
+  except:
+    echo "Could not load saved scene from localStorage."
     rock.init()
   base.init()
   boom.init()

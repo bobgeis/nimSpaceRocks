@@ -14,8 +14,7 @@ import ../objs/loot
 import ../objs/player
 
 const
-  ticksPerLoot = 180 ##!
-    ## the number of ticks a bonus lasts per loot item delivered
+  shotsPerLoot = 10
 
 proc interactbaseplayer*(scene: var Scene) =
   ## interact the player with the bases
@@ -25,11 +24,12 @@ proc interactbaseplayer*(scene: var Scene) =
       let lootkind =
         case base.kind
         of bkHospital:
-          scene.player.spreadTime += scene.cargo[lkPod] * ticksPerLoot
+          scene.player.multiShots += scene.cargo[lkPod] * shotsPerLoot
           lkPod
         of bkRefinery:
-          scene.player.burstTime += scene.cargo[lkGem] * ticksPerLoot
+          scene.player.ringShots += scene.cargo[lkGem] * shotsPerLoot
           lkGem
-      base.glow = baseMaxGlow
-      scene.delivered[lootkind] += scene.cargo[lootkind]
-      scene.cargo[lootkind] = 0
+      if scene.cargo[lootkind] > 0:
+        base.glow = baseMaxGlow
+        scene.delivered[lootkind] += scene.cargo[lootkind]
+        scene.cargo[lootkind] = 0

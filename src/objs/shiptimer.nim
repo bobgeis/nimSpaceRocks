@@ -13,31 +13,32 @@ type
     ticks*: int
 
 const
-  initMaxRoll = 200
+  initMaxRoll = 150
   initMinRoll = 50
-  lowMaxRoll = 100
-  lowMinRoll = 25
-  numRolls = 3
-  speedUp = 0.5
+  lowMaxRoll = 50
+  lowMinRoll = 10
+  numRolls = 4
+  speedUp = 1.0
 
 # creation
 
 proc newShipTimer*(): ShipTimer =
   result = ShipTimer(
-    ship: newRandShip(),
+    ship: newRandShip(0),
     ticks: 0,
   )
 
 # manipulation
 
-proc prepShip*(timer: var ShipTimer, shipScore: int) =
+proc prepShip*(timer: var ShipTimer, lootScore: int = 0) =
   ## put a new ship with a new countdown into the timer
   let
-    maxRoll = max(floor(initMaxRoll - shipScore.float * speedUp), lowMaxRoll)
-    minRoll = max(floor(initMinRoll - shipScore.float * speedUp), lowMinRoll)
+    difficulty = lootScore/100
+    maxRoll = max(floor(initMaxRoll - difficulty * speedUp), lowMaxRoll)
+    minRoll = max(floor(initMinRoll - difficulty * speedUp), lowMinRoll)
   var
     ticks = 0
   for i in 0..numRolls:
     ticks += randi(minRoll, maxRoll)
-  timer.ship = newRandShip(0.0)
+  timer.ship = newRandShip(difficulty)
   timer.ticks = ticks

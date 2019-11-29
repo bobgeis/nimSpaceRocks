@@ -39,7 +39,7 @@ var
 func lifetime*(kind: BoomKind): int =
   ## the duration of a boom effect in ticks
   case kind
-  of xkEx: 13
+  of xkEx: 15
   of xkOut: 30
   of xkIn: 60
 
@@ -50,31 +50,54 @@ func dr*(kind: BoomKind): float =
   of xkOut: 3.5
   of xkIn: -3.5
 
-func color(kind: BoomKind, life: int): string =
-  ## choose the color for the given BoomKind and life left
-  let
-    ratio = life.float / kind.lifetime.float # note that this goes 1.0 -> 0.0
-  case kind
+func getImgColors(kind: BoomKind, life: int): (string,string) =
+  ## Get the colors for the boom effect.
+  let ratio = life/kind.lifetime
+  case kind:
   of xkEx:
-    return hsl(
-      10 + 50 * ratio,
-      100,
-      50 + 50 * ratio,
-      0.5 + ratio / 2,
+    return (
+      hsl(
+        30 + 30 * ratio,
+        100,
+        70 + 30 * ratio,
+        0.15 + 0.85 * ratio * ratio,
+      ),
+      hsl(
+        10 + 50 * ratio,
+        100,
+        50 + 50 * ratio,
+        0.5 + 0.5 * ratio,
+      )
     )
   of xkOut:
-    return hsl(
-      200,
-      100,
-      40 + 60 * ratio,
-      ratio * ratio,
+    return (
+      hsl(
+        200,
+        100,
+        70 + 30 * ratio,
+        0.05 + 0.95 * ratio * ratio,
+      ),
+      hsl(
+        200,
+        100,
+        40 + 60 * ratio,
+        0.25 + 0.75 * ratio,
+      )
     )
   of xkIn:
-    return hsl(
-      200,
-      100,
-      100 - 60 * ratio,
-      (1 - ratio) * (1 - ratio),
+    return (
+      hsl(
+        200,
+        100,
+        100 - 30 * ratio,
+        0.05 + 0.95 * (1 - ratio) * (1 - ratio),
+      ),
+      hsl(
+        200,
+        100,
+        100 - 60 * ratio,
+        0.25 + 0.75 * (1 - ratio),
+      )
     )
 
 ## creation
@@ -126,13 +149,17 @@ proc makeBoomCanvas(kind:BoomKind, life: int) =
     r = imgRadius
     w = imgDims.w
     ctx = createCanvas().getContext()
-    color = kind.color(life)
+    imgColors = kind.getImgColors(life)
   ctx.imageSmoothingEnabled = false
   ctx.canvas.width = w
   ctx.canvas.height = w
   ctx.translate(w/2,w/2)
+  let
+    grad = ctx.createRadialGradient(0.0,0,0.75*r,0,0,r)
+  grad.addColorStop 0, imgColors[0]
+  grad.addColorStop 1, imgColors[1]
   ctx.beginPath()
-  ctx.fillStyle = color
+  ctx.setFillStyle grad
   ctx.arc(0.0, 0, r, 0, TAU)
   ctx.fill()
   boomImgs[kind].add ctx.canvas

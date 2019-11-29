@@ -24,7 +24,7 @@ proc drawTextCentered(ctx:Context,x,y:float,str:string, minW=0.0, minH=0.0) =
 
 proc drawFPS*(ctx:Context,dt:float) =
   ## Draw a frames per second counter
-  ctx.drawTextCentered(50.0,yMax-50.0,&"fps: {1000/dt:>4.2f}")
+  ctx.drawTextCentered(50.0,yMax-50.0,&"fps: {1000/dt:>3.0f}")
 
 proc drawScore*(ctx: Context, scene: Scene) =
   ## draw the ui for the given scene
@@ -41,13 +41,13 @@ proc drawScore*(ctx: Context, scene: Scene) =
     strs.add &"Pods:  {scene.cargo[lkPod]:>4}"
   if scene.cargo[lkGem] > 0:
     strs.add &"Gems:  {scene.cargo[lkGem]:>4}"
-  if scene.player.burstTime > 0 or scene.player.spreadTime > 0:
+  if scene.player.ringShots > 0 or scene.player.multiShots > 0:
     strs.add ""
     strs.add " Powerup "
-  if scene.player.burstTime > 0:
-    strs.add &"Burst:  {scene.player.burstTime div 60:>3}"
-  if scene.player.spreadTime > 0:
-    strs.add &"Spread: {scene.player.spreadTime div 60:>3}"
+  if scene.player.ringShots > 0:
+    strs.add &"Ring:  {scene.player.ringShots:>4}"
+  if scene.player.multiShots > 0:
+    strs.add &"Multi: {scene.player.multiShots:>4}"
   const
     ix = 15.0 + textCharPxWidth * 9.0 * 0.5
     dx = 0.0

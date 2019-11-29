@@ -11,5 +11,5 @@ proc interactBulletPlayer*(scene: var Scene) =
   ## interact fire new bullets
   if not scene.player.alive: return
   if scene.player.firing and scene.player.cd == 0:
-    scene.bullets.createBullets(scene.player, scene.player.spreadTime > 0,
-        scene.player.burstTime > 0)
+    scene.bullets.createBullets(scene.player, scene.player.multiShots > 0,
+        scene.player.ringShots > 0)

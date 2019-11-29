@@ -18,7 +18,7 @@ type
   RockMat* = enum ##!
     ## the material the rock is made of: ice, silicaceous,
     ## carbonaceous, metallic, or exotic
-    rmIce, rmC, rmS, rmM, rmX,
+    rmIce, rmC, rmS, rmM, rmT, rmX, rmXX
   RockSize* = enum ##!
     ## the size of the rock: tiny, small, medium, large, huge, gigantic
     rsTiny, rsSmall, rsMedium, rsLarge, rsHuge, rsGigantic
@@ -35,8 +35,7 @@ const
   dvr = 1.00                  ## change in linear velocity of calves (px/tick)
   points_n = 9                ## avg number of points a rock has
   points_dn = 2               ## variability in number of points: n +/- dn
-  points_da = TAU / (points_dn + points_n).float / 6 ##!
-  ## variability in degrees between each point
+  points_da = TAU / (points_dn + points_n).float / 6 ## variability in degrees between each point
   points_dr = 0.25            ## variability in radius of points (fractional)
   shapesInnerRadius = 0.75       ## ratio of the rock inner radius to outer
   shapes_n = 16               ## number of different rock shapes to make
@@ -78,79 +77,52 @@ func matToColor(mat: RockMat): (string, string) =
   ## given a mat, get (outer color, inner color)
   case mat
   of rmIce: (hsl(220, 30, 65), hsl(220, 30, 75))
-  # of rmC: (hsl(50,30,50),hsl(50,30,60))
   of rmC: (hsl(80, 10, 50), hsl(80, 10, 60))
-  # of rmS: (hsl(25,30,50),hsl(25,30,75))
   of rmS: (hsl(50, 30, 50), hsl(50, 30, 60))
   of rmM: (hsl(10, 30, 50), hsl(10, 30, 60))
-  of rmX: (hsl(300, 80, 70), hsl(300, 90, 90))
-  # of rmX: (hsl(200,80,70),hsl(180,90,90))
-  # else: (hsl(200,80,70),hsl(180,90,90))
+  of rmT: (hsl(0, 20, 30), hsl(0, 25, 35))
+  of rmX: (hsl(300, 20, 60, 0.5), hsl(300, 30, 70, 0.5))
+  of rmXX: (hsl(200, 80, 70, 0.7), hsl(180, 90, 80, 0.7))
 
 func gemChance*(mat: RockMat): float =
   ## chance to get a gem when each type of RockMat is busted
   case mat
-  of rmIce: 0.15
-  of rmC:   0.11
-  of rmS:   0.09
+  of rmIce: 0.3
+  of rmC:   0.15
+  of rmS:   0.08
   of rmM:   0.04
-  of rmX:   0.02
+  of rmT:   0.02
+  of rmX:   0.01
+  of rmXX:  0.06
 
 func getCalfNumber(mat: RockMat, roll: float): int =
   ## the number of calves to get for each RockMat
   case mat
   of rmIce:
-    if roll < 0.05: 0
-    elif roll < 0.5: 1
-    else: 1
-  of rmC:
-    if roll < 0.25: 1
-    elif roll < 0.99: 2
-    else: 3
-  of rmS:
-    if roll < 0.3: 1
-    elif roll < 0.9: 2
-    else: 3
-  of rmM:
-    if roll < 0.1: 1
-    elif roll < 0.6: 2
-    elif roll < 0.99: 3
-    else: 4
-  of rmX:
-    if roll < 0.1: 1
-    elif roll < 0.4: 2
-    elif roll < 0.9: 3
-    else: 4
-
-func getSmallerCalfNumber(mat: RockMat, roll: float): int =
-  ## the number of mini calves to get for each RockMat
-  case mat
-  of rmIce:
     if roll < 0.1: 0
-    elif roll < 0.4: 1
-    elif roll < 0.9: 2
+    elif roll < 0.9: 1
     else: 2
   of rmC:
-    if roll < 0.3: 0
-    elif roll < 0.8: 1
-    elif roll < 0.95: 2
-    else: 3
+    if roll < 0.5: 1
+    else: 2
   of rmS:
-    if roll < 0.4: 0
-    elif roll < 0.8: 1
-    elif roll < 0.99: 2
-    else: 3
-  of rmM:
-    if roll < 0.5: 0
-    elif roll < 0.9: 1
-    elif roll < 1.0: 2
-    else: 3
-  of rmX:
-    if roll < 0.1: 0
-    elif roll < 0.4: 1
+    if roll < 0.1: 1
     elif roll < 0.9: 2
     else: 3
-
+  of rmM:
+    if roll < 0.5: 2
+    else: 3
+  of rmT:
+    if roll < 0.1: 2
+    elif roll < 0.9: 3
+    else: 4
+  of rmX:
+    if roll < 0.5: 3
+    else: 4
+  of rmXX:
+    if roll < 0.1: 3
+    elif roll < 0.9: 4
+    else: 5
 
 proc makePoints(): seq[(float, float)] =
   ## randomly generate points for the outline of a rock
@@ -181,31 +153,35 @@ proc newRock*(x, y, a, vx, vy, va: float, mat: RockMat, size: RockSize,
 
 proc chooseSize(difficulty: float = 0.0): RockSize =
   let
-    roll = randf() + difficulty
+    roll = randf() * (1.0 + difficulty)
   if roll < 0.1:
     rsSmall
   elif roll < 0.3:
     rsMedium
-  elif roll < 0.7:
+  elif roll < 0.6:
     rsLarge
-  elif roll < 1.1:
+  elif roll < 1.0:
     rsHuge
   else:
     rsGigantic
 
 proc chooseMat(difficulty: float = 0.0): RockMat =
   let
-    roll = randf() + difficulty
+    roll = randf() * (1.0 + difficulty)
   if roll < 0.3:
     rmIce
-  elif roll < 0.55:
+  elif roll < 0.6:
     rmC
-  elif roll < 0.8:
+  elif roll < 0.9:
     rmS
-  elif roll < 1.05:
+  elif roll < 1.4:
     rmM
-  else:
+  elif roll < 1.9:
+    rmT
+  elif roll < 2.6:
     rmX
+  else:
+    rmXX
 
 proc spawnRock*(difficulty: float = 0.0): Rock =
   ## spawn a new random rock
@@ -230,15 +206,11 @@ proc makeCalf*(rock: Rock, size: RockSize): Rock =
     randi(shapes_n)
   )
 
-proc makeCalves*(rock: Rock): seq[Rock] =
-  ## make any calves that should be created from this rock
-  result = @[]
+proc addCalves*(rocks: var seq[Rock], rock:Rock) =
+  ## Given a rock that is breaking, add its calves to the seq.
   if rock.size == rsTiny: return
   for i in 0..<getCalfNumber(rock.mat, randf()):
-    result.add rock.makeCalf(rock.size.shrink)
-  if rock.size == rsSmall: return
-  for i in 0..<getSmallerCalfNumber(rock.mat, randf()):
-    result.add rock.makeCalf(rock.size.shrink.shrink)
+    rocks.add rock.makeCalf(rock.size.shrink)
 
 ## manipulation
 
@@ -337,7 +309,6 @@ proc initImgs() =
 
 proc init*(rpts: RockPoints) =
   ## Initialize the off screen canvases that contain the rock images.  This must be called before any rocks can be drawn.
-  # rockPoints = if not rpts: initPoints() else: rpts
   rockPoints = rpts
   initImgs()
 

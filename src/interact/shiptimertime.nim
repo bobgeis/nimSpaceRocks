@@ -10,7 +10,8 @@ proc interactShipTimer*(scene: var Scene) =
   ## update the ShipTimer, and add any ship or flash that is ready
   if scene.shipTimer.ticks == 0:
     scene.ships.add(scene.shipTimer.ship)
-    scene.shipTimer.prepShip(0)
+    let lootScore = scene.delivered.sum()
+    scene.shipTimer.prepShip(lootScore)
   else:
     scene.shipTimer.ticks -= 1
   if scene.shipTimer.ticks == xkIn.lifetime:

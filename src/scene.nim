@@ -34,6 +34,11 @@ type
     rocksBusted*: int
     shipsSafe*: int
 
+proc sum*(arr:array[LootKind,int]): int =
+  ## sum the kinds of loot collected
+  result = 0
+  for loot in arr: result += loot
+
 proc newScene*(): Scene =
   ## get a new starting scene
   result = Scene(

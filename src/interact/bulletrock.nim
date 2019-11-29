@@ -5,7 +5,6 @@
 ## * an explosion should be added
 ## * any resulting calves should be added
 ## * any resulting loot should be added
-## * any resulting shrapnel should be added
 
 import algorithm
 import sequtils
@@ -25,7 +24,7 @@ import ../objs/rock
 proc interactbulletrock*(scene: var Scene) =
   ## collide bullets and rocks and handle consequences
   var
-    collidedBullets: seq[Bullet] = @[]
+    # collidedBullets: seq[Bullet] = @[]
     collidedRocks: seq[Rock] = @[]
     cullBullets: seq[Natural] = @[]
     cullRocks: seq[Natural] = @[]
@@ -35,15 +34,14 @@ proc interactbulletrock*(scene: var Scene) =
       if cirCollide(rock, bullet):
         cullRocks.add i
         collidedRocks.add rock
-        cullBullets.add j
-        collidedBullets.add bullet
+        if not bullet.ring:
+          cullBullets.add j
   # cull rocks and bullets
   scene.rocks.deleteIndices cullRocks.sorted.deduplicate(true)
   scene.bullets.deleteIndices cullBullets.sorted.deduplicate(true)
   # make calves
   for rock in collidedRocks:
-    for calf in rock.makeCalves:
-      scene.rocks.add calf
+    scene.rocks.addCalves rock
   # explosions
   for rock in collidedRocks:
     scene.booms.add(newBoom(rock, xkEx, xeWrap))
@@ -54,8 +52,3 @@ proc interactbulletrock*(scene: var Scene) =
       scene.loots.add(newLoot(rock, lkGem))
   # update rock score
   scene.rocksBusted += collidedRocks.len
-  # shrapnel
-  for bullet in collidedBullets:
-    if bullet.shatter:
-      scene.bullets.addShrapnel(bullet)
-      scene.booms.add(newBoom(bullet,xkOut))

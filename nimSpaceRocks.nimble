@@ -12,7 +12,7 @@ binDir = "public"
 
 # Dependencies
 
-requires "nim >= 0.20.0"
+requires "nim >= 1.0.4"
 
 
 # Tasks
@@ -40,28 +40,8 @@ task prod, "compile release version to js":
   exec "terser public/script.webrel.js -o public/script.js -c -m"
   exec "rm public/script.webrel.js"
 
-task fileff, "open the game in firefox":
-  exec "firefox --new-tab file://" & projectDir() & "/public/index.html & "
-
-task filech, "open the game in chrome":
-  exec "\"Google Chrome\" -new-tab -url public/index.html"
-
 task serve, "start simple python server":
   exec "(cd public && python -m SimpleHTTPServer)"
-
-task lhff, "open localhost in firefox":
-  exec "firefox --new-tab http://localhost:8000/ & "
-
-task lhch, "open localhost in chrome":
-  exec "\"Google Chrome\" -new-tab -url http://localhost:8000/"
-
-task servech, "serve and open in chrome":
-  selfExec "serve"
-  selfExec "lhch"
-
-task serveff, "serve and open in firefox":
-  selfExec "serve"
-  selfExec "lhff"
 
 task ghpages, "compile prod and push to github pages":
   exec "git checkout gh-pages"

@@ -113,4 +113,4 @@ proc drawImage*(ctx: Context, image: ImageElement or Canvas, sx, sy, sw, sh, dx,
 ## Gradient functions
 proc createLinearGradient*(ctx: Context, x0, y0, x1, y1: SomeNumber): CanvasGradient {.importcpp.}
 proc createRadialGradient*(ctx: Context, x0, y0, r0, x1, y1, r1: SomeNumber): CanvasGradient {.importcpp.}
-proc addColorStop*(grad: CanvasGradient, offset: SomeNumber, color: cstring or string) {.importcpp.}
+proc addColorStop*(grad: CanvasGradient, offset: SomeNumber, color: cstring) {.importcpp.}

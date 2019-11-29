@@ -14,14 +14,15 @@ type
   Bullet* = ref object
     x*, y*, a*, vx*, vy*, va*, r*: float
     life*: int
-    shatter*: bool
+    ring*: bool
 
 const
   daSpread = TAU / 30.0
-  rShatter = 25.0
   bulletRadius = 3.0
   bulletSpeed = 12.0
   bulletLife = 50
+  ringShotMaxRadius = 15.0
+  ringShotGrowth = (ringShotMaxRadius - bulletRadius) * (1/50)
 
 let
   imgRadius = bulletRadius * 2.5 * pixelRatio
@@ -29,11 +30,11 @@ let
 
 var
   bulletImgs: array[numGlowColors,Canvas]
-  bursterImgs: array[numGlowColors,Canvas]
+  ringImgs: array[numGlowColors,Canvas]
 
 ## creation
 
-proc newBullet(x, y, vx, vy, a: float, shatter: bool = false): Bullet =
+proc newBullet(x, y, vx, vy, a: float, ring: bool = false): Bullet =
   ## given a starting pos & vel, angle, and kind, return a Bullet
   let
     ax = Math.cos(a)
@@ -44,25 +45,20 @@ proc newBullet(x, y, vx, vy, a: float, shatter: bool = false): Bullet =
     vy: vy + ay * bulletSpeed,
     r: bulletRadius,
     life: bulletLife,
-    shatter: shatter,
+    ring: ring,
     )
 
 proc createBullets*[Obj](bullets: var seq[Bullet], obj: Obj,
-    spread: bool = false, shatter: bool = false) =
+    spread: bool = false, ring: bool = false) =
   ## create bullets from the obj,
   ## which should have normal object properties: x,y,a and vx,vy,va
   ## the created bullets will be added to the bullets seq
-  bullets.add newBullet(obj.x, obj.y, obj.vx, obj.vy, obj.a, shatter)
+  bullets.add newBullet(obj.x, obj.y, obj.vx, obj.vy, obj.a, ring)
   if spread:
     bullets.add newBullet(obj.x, obj.y, obj.vx, obj.vy, obj.a + daSpread,
-        shatter)
+        ring)
     bullets.add newBullet(obj.x, obj.y, obj.vx, obj.vy, obj.a - daSpread,
-        shatter)
-
-proc addShrapnel*[Obj](bullets: var seq[Bullet], obj: Obj) =
-  ## add shrapnel bullet from an exploding shatter shot
-  ## it lasts one tick, but destroys everything in range in that tick
-  bullets.add Bullet(x: obj.x, y: obj.y, vx:0, vy:0, life:1, r:rShatter, shatter:false)
+        ring)
 
 ## manipulation
 
@@ -72,6 +68,7 @@ proc update*(bullet: var Bullet): bool =
   bullet.life -= 1
   bullet.ballistics()
   wrapObj(bullet)
+  if bullet.ring: bullet.r += ringShotGrowth
   return true
 
 ## draw
@@ -83,7 +80,7 @@ proc draw*(ctx: Context, obj: Bullet) =
     y = obj.y
     a = obj.a
     offset = ratioToGlowOffset(obj.life/bulletLife)
-    img = if obj.shatter: bursterImgs[offset] else: bulletImgs[offset]
+    img = if obj.ring: ringImgs[offset] else: bulletImgs[offset]
   ctx.drawSprite(img,x,y,a,imgDims)
   for edge in obj.edgesObj:
     ctx.drawSprite(img,edge[0],edge[1],a,imgDims)
@@ -105,19 +102,6 @@ proc makeBulletImg(i:int):Canvas =
   ctx.canvas.width = w
   ctx.canvas.height = w
   ctx.translate w/2.0, w/2.0
-  # #
-  # ctx.beginPath
-  # ctx.strokeStyle = colors[1]
-  # ctx.lineWidth = r * 0.4
-  # ctx.moveTo r * 0.6, 0.0
-  # ctx.lineTo -r * 1.1, 0.0
-  # ctx.stroke()
-  # ctx.beginPath
-  # ctx.strokeStyle = colors[0]
-  # ctx.lineWidth = r * 0.2
-  # ctx.moveTo r * 0.55, 0.0
-  # ctx.lineTo -r, 0.0
-  # ctx.stroke()
   #
   ctx.beginPath
   ctx.fillStyle = colors[0]
@@ -162,4 +146,4 @@ proc init*() =
   ## create bullet canvases
   for i in 0..<numGlowColors:
     bulletImgs[i] = makeBulletImg(i)
-    bursterImgs[i] = makeBursterImg(i)
+    ringImgs[i] = makeBursterImg(i)

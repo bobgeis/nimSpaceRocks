@@ -50,7 +50,15 @@ func hullColors(kind: ShipKind): (string, string) =
 
 proc randKind(difficulty: float = 0.0): ShipKind =
   ## get a random ShipKind
-  randEnum(ShipKind)
+  let
+    roll = randf() + difficulty
+    roll2 = randf()
+  if roll < 0.5:
+    if roll2 < 0.5: skLiner else: skMiner
+  elif roll < 0.9:
+    if roll2 < 0.5: skMedic else: skGuild
+  else:
+    if roll2 < 0.5: skPolice else: skScience
 
 # creation
 
@@ -66,7 +74,7 @@ proc newRandShip*(difficulty: float = 0.0): Ship =
     x: x, y: y, a: a,
     vx: vx, vy: vy, va: 0,
     r: shipRadius, glow: shipGlow,
-    kind: randKind(),
+    kind: randKind(difficulty),
   )
 
 # manipulation

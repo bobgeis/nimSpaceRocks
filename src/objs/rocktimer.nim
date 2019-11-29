@@ -11,12 +11,12 @@ type
     ticks*: int
 
 const
-  initMaxRoll = 200
+  initMaxRoll = 150
   initMinRoll = 50
-  lowMaxRoll = 100
-  lowMinRoll = 25
-  numRolls = 3
-  speedUp = 0.5
+  lowMaxRoll = 50
+  lowMinRoll = 10
+  numRolls = 4
+  speedUp = 1.0
 
 # creation
 
@@ -31,11 +31,12 @@ proc newRockTimer*(): RockTimer =
 proc newRock*(timer: var RockTimer, shipScore: int) =
   ## put a new rock with a new countdown into the timer
   let
-    maxRoll = max(floor(initMaxRoll - shipScore.float * speedUp), lowMaxRoll)
-    minRoll = max(floor(initMinRoll - shipScore.float * speedUp), lowMinRoll)
+    difficulty = shipScore/100
+    maxRoll = max(floor(initMaxRoll - difficulty * speedUp), lowMaxRoll)
+    minRoll = max(floor(initMinRoll - difficulty * speedUp), lowMinRoll)
   var
     ticks = 0
   for i in 0..numRolls:
     ticks += randi(minRoll, maxRoll)
-  timer.rock = spawnRock()
+  timer.rock = spawnRock(difficulty)
   timer.ticks = ticks

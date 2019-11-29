@@ -21,12 +21,12 @@ proc getLoot(obj: Ship): seq[Loot] =
   ## get a seq of loot objects for the ship
   let
     loots = case obj.kind
-      of skLiner: @[lkPod, lkPod, lkPod]
-      of skMiner: @[lkPod, lkGem, lkGem]
-      of skMedic: @[lkPod, lkPod, lkPod, lkPod]
-      of skGuild: @[lkPod, lkGem, lkGem, lkGem]
-      of skScience: @[lkPod, lkGem, lkPod, lkGem, lkGem]
-      of skPolice: @[lkPod, lkPod, lkGem, lkPod, lkPod]
+      of skLiner: @[lkPod, lkPod, lkPod, lkPod]
+      of skMiner: @[lkPod, lkPod, lkGem, lkGem]
+      of skMedic: @[lkPod, lkPod, lkPod, lkPod, lkPod]
+      of skGuild: @[lkPod, lkPod, lkGem, lkGem, lkGem]
+      of skScience: @[lkPod, lkPod, lkGem, lkPod, lkGem, lkGem]
+      of skPolice: @[lkPod, lkPod, lkPod, lkGem, lkPod, lkPod]
     i = randi(1, loots.len)
   loots[0..<i].mapIt(obj.newLoot(it))
 

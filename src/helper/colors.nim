@@ -12,12 +12,16 @@ func rgb*(r, g, b, a: int or float or string): string =
   "rgba(" & $r & "," & $g & "," & $b & "," & $a & ")"
 
 func hsl*(h, s, l: int or float or string): string =
-  ## h should be 0-360, s,l should be 0-100
+  ## h should be 0-360,
+  ## h: 0=red, 60=yellow, 120=green, 180=cyan, 240=blue, 300=magenta
+  ## s,l should be 0-100
   ## returns string "hsl(...)"
   "hsl(" & $h & "," & $s & "%," & $l & "%)"
 
 func hsl*(h, s, l, a: int or float or string): string =
-  ## h should be 0-360, s,l should be 0-100
+  ## h should be 0-360,
+  ## h: 0=red, 60=yellow, 120=green, 180=cyan, 240=blue, 300=magenta
+  ## s,l should be 0-100
   ## a should be 0-1
   ## returns string "hsla(...)"
   "hsla(" & $h & "," & $s & "%," & $l & "%," & $a & ")"

@@ -28,8 +28,8 @@ type
     acc*, strafe*: float
     cd*, glow*: float
     firing*, alive*: bool
-    spreadTime*: int ## ticks left of spread bonus
-    burstTime*: int ## ticks left of shatter bonus
+    multiShots*: int ## shots left of multi gun
+    ringShots*: int ## shots left of ring gun
   PlayerCommand* = enum
     TurnLeft, TurnRight, TurnStop,
     AccThrust, AccRetro, AccStop,
@@ -52,8 +52,8 @@ proc newPlayer*(): Player =
     glow: 0,
     firing: false,
     alive: true,
-    spreadTime: 300,
-    burstTime: 300,
+    multiShots: 0,
+    ringShots: 0,
   )
 
 # manipulation
@@ -66,8 +66,8 @@ proc kill*(player: var Player) =
   player.acc = 0
   player.strafe = 0
   player.firing = false
-  player.spreadTime = 0
-  player.burstTime = 0
+  player.multiShots = 0
+  player.ringShots = 0
 
 proc update*(player: var Player) =
   ## update the player one tick
@@ -82,10 +82,10 @@ proc update*(player: var Player) =
   if player.firing and player.cd == 0:
     player.cd = cooldown
     player.glow = max(player.glow, glowBang)
+    player.multiShots = max(0, player.multiShots - 1)
+    player.ringShots = max(0, player.ringShots - 1)
   else:
     player.cd = max(0, player.cd - 1)
-  player.spreadTime = max(0, player.spreadTime - 1)
-  player.burstTime = max(0, player.burstTime - 1)
 
 proc command*(player: var Player, cmd: PlayerCommand) =
   case cmd
