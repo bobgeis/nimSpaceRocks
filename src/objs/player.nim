@@ -11,6 +11,7 @@ import ../common
 
 const
   playerRadius = 10.0
+  playerTeleportRadius* = playerRadius * 3.0
   accThrust = 0.15
   accRetro = -0.05
   accstrafe = 0.05

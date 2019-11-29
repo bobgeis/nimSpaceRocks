@@ -35,27 +35,30 @@ proc drag*[Obj](obj: var Obj) =
   obj.vx = drag(obj.vx, obj.drag)
   obj.vy = drag(obj.vy, obj.drag)
 
-proc mag*(x, y: SomeNumber): float =
+proc hypot(math:MathLib, x,y: distinct SomeNumber):float {.importcpp.}
+proc atan2(math:MathLib, y,x: distinct SomeNumber):float {.importcpp.}
+
+proc mag*(x, y: distinct SomeNumber): float =
   ## get the magnitude of an xy vector
-  Math.hypot(x, y)
+  hypot(Math, x, y)
 
-proc angle*(x, y: SomeNumber): float =
+proc angle*(x, y: distinct SomeNumber): float =
   ## get the angle of an xy vector
-  Math.atan2(y, x)
+  atan2(Math, y, x)
 
-proc ratoxy*(r, a: SomeNumber): (float, float) =
+proc ratoxy*(r, a: float): (float, float) =
   ## Convert radius and angle(rad) to x and y.
   (r * Math.cos(a), r * Math.sin(a))
 
-proc xytora*(x, y: SomeNumber): (float, float) =
+proc xytora*(x, y: float): (float, float) =
   ## convert x,y vector to an r,a vector
   (mag(x, y), angle(x, y))
 
-func dist*(x1, y1, x2, y2: SomeNumber): float =
+proc dist*(x1, y1, x2, y2: distinct SomeNumber): float =
   ## get the distance between two x, y points
   mag(x2 - x1, y2 - y1)
 
-func dist*[PointA, PointB](a: PointA, b: PointB): float =
+proc dist*[PointA, PointB](a: PointA, b: PointB): float =
   ## get the distance between two points (of potentially different types)
   ## they must each have .x and .y values of type float
   dist(a.x, a.y, b.x, b.y)

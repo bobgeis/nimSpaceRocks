@@ -10,6 +10,7 @@ import ../helper/utils
 import ../scene
 
 import ../objs/base
+import ../objs/boom
 import ../objs/loot
 import ../objs/player
 
@@ -31,5 +32,6 @@ proc interactbaseplayer*(scene: var Scene) =
           lkGem
       if scene.cargo[lootkind] > 0:
         base.glow = baseMaxGlow
+        scene.booms.add(newBoom(base, xkTl, xeWrap))
         scene.delivered[lootkind] += scene.cargo[lootkind]
         scene.cargo[lootkind] = 0

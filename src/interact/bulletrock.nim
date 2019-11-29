@@ -39,15 +39,11 @@ proc interactbulletrock*(scene: var Scene) =
   # cull rocks and bullets
   scene.rocks.deleteIndices cullRocks.sorted.deduplicate(true)
   scene.bullets.deleteIndices cullBullets.sorted.deduplicate(true)
-  # make calves
+  # make calves & explosions & loot
   for rock in collidedRocks:
     scene.rocks.addCalves rock
-  # explosions
-  for rock in collidedRocks:
     scene.booms.add(newBoom(rock, xkEx, xeWrap))
     scene.particles.addParticlesOn rock
-  # loot
-  for rock in collidedRocks:
     if randf() < rock.mat.gemChance:
       scene.loots.add(newLoot(rock, lkGem))
   # update rock score

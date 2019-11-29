@@ -11,6 +11,7 @@ import ../helper/utils
 
 import ../scene
 
+import ../objs/boom
 import ../objs/loot
 import ../objs/player
 
@@ -20,8 +21,10 @@ proc interactlootplayer*(scene: var Scene) =
   var
     cull: seq[Natural] = @[]
   for i, loot in scene.loots:
-    if scene.player.cirCollide(loot):
+    # if scene.player.dist(loot) <= teleportRange:
+    if scene.player.dist(loot) <= playerTeleportRadius:
       cull.add i
       scene.cargo[loot.kind] += 1
+      scene.booms.add(newBoom(loot, xkTl, xeWrap))
   scene.loots.deleteIndices cull
   return

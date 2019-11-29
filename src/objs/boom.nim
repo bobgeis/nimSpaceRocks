@@ -15,7 +15,7 @@ import ../common
 
 type
   BoomKind* = enum
-    xkEx, xkOut, xkIn,
+    xkEx, xkOut, xkIn, xkTl
   BoomEdge* = enum
     xeClamp, xeWrap
   Boom* = object
@@ -42,6 +42,7 @@ func lifetime*(kind: BoomKind): int =
   of xkEx: 15
   of xkOut: 30
   of xkIn: 60
+  of xkTl: 12
 
 func dr*(kind: BoomKind): float =
   ## how the radius of a boom effect changes each tick
@@ -49,6 +50,7 @@ func dr*(kind: BoomKind): float =
   of xkEx: 5.0
   of xkOut: 3.5
   of xkIn: -3.5
+  of xkTl: 2.5
 
 func getImgColors(kind: BoomKind, life: int): (string,string) =
   ## Get the colors for the boom effect.
@@ -99,6 +101,21 @@ func getImgColors(kind: BoomKind, life: int): (string,string) =
         1.0 * (1 - ratio),
       )
     )
+  of xkTl:
+    return (
+      hsl(
+        60,
+        100,
+        70 + 30 * ratio,
+        1.0 * ratio,
+      ),
+      hsl(
+        60,
+        90,
+        60 + 40 * ratio,
+        0.3 + 0.7 * ratio,
+      )
+    )
 
 ## creation
 
@@ -108,6 +125,7 @@ proc newBoom*[Obj](obj: Obj, kind: BoomKind = xkEx,
     of xkEx: obj.r
     of xkIn: obj.r - (xkIn.dr * xkIn.lifetime.float)
     of xkOut: obj.r
+    of xkTl: obj.r
   ## create a new boom from a given obj (needs x,y,a,r: float)
   Boom(
     x: obj.x, y: obj.y, a: obj.a,
