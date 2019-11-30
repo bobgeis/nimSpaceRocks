@@ -32,8 +32,8 @@ proc drawScore*(ctx: Context, scene: Scene) =
   strs.add "  Score  "
   strs.add &"Pods:  {scene.delivered[lkPod]:>4}"
   strs.add &"Gems:  {scene.delivered[lkGem]:>4}"
-  strs.add &"Rocks: {scene.rocksBusted:>4}"
-  strs.add &"Ships: {scene.shipsSafe:>4}"
+  strs.add &"Rocks: {scene.rockScore:>4}"
+  strs.add &"Ships: {scene.shipScore:>4}"
   if scene.cargo[lkPod] > 0 or scene.cargo[lkGem] > 0:
     strs.add ""
     strs.add "  Cargo  "

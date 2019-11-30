@@ -24,10 +24,10 @@ import ../objs/rock
 proc interactbulletrock*(scene: var Scene) =
   ## collide bullets and rocks and handle consequences
   var
-    # collidedBullets: seq[Bullet] = @[]
     collidedRocks: seq[Rock] = @[]
-    cullBullets: seq[Natural] = @[]
     cullRocks: seq[Natural] = @[]
+    cullBullets: seq[Natural] = @[]
+    cullBulletsEvil: seq[Natural] = @[]
   # check collisions
   for i, rock in scene.rocks:
     for j, bullet in scene.bullets:
@@ -36,9 +36,17 @@ proc interactbulletrock*(scene: var Scene) =
         collidedRocks.add rock
         if not bullet.ring:
           cullBullets.add j
+    # repeat for evil bullets
+    for j, bullet in scene.bulletsEvil:
+      if cirCollide(rock, bullet):
+        cullRocks.add i
+        collidedRocks.add rock
+        if not bullet.ring:
+          cullBulletsEvil.add j
   # cull rocks and bullets
   scene.rocks.deleteIndices cullRocks.sorted.deduplicate(true)
   scene.bullets.deleteIndices cullBullets.sorted.deduplicate(true)
+  scene.bulletsEvil.deleteIndices cullBulletsEvil.sorted.deduplicate(true)
   # make calves & explosions & loot
   for rock in collidedRocks:
     scene.rocks.addCalves rock
@@ -47,4 +55,4 @@ proc interactbulletrock*(scene: var Scene) =
     if randf() < rock.mat.gemChance:
       scene.loots.add(newLoot(rock, lkGem))
   # update rock score
-  scene.rocksBusted += collidedRocks.len
+  scene.rockScore += collidedRocks.len

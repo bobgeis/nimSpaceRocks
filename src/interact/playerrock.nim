@@ -10,19 +10,9 @@ import ../helper/geom
 import ../scene
 
 import ../objs/boom
-import ../objs/loot
 import ../objs/particle
 import ../objs/player
 import ../objs/rock
-
-proc getPlayerLoot(scene: Scene): seq[Loot] =
-  ## get a sequence of loot to disperse on player death
-  result = @[]
-  result.add scene.player.newLoot(lkPod)
-  for i in 0..<scene.cargo[lkPod]:
-    result.add scene.player.newLoot(lkPod)
-  for i in 0..<scene.cargo[lkGem]:
-    result.add scene.player.newLoot(lkGem)
 
 proc interactplayerrock*(scene: var Scene) =
   ## handle player/rock interactions
@@ -35,5 +25,5 @@ proc interactplayerrock*(scene: var Scene) =
       scene.booms.add(newBoom(scene.player, xkEx, xeWrap))
       scene.particles.addParticlesOn scene.player
       # add loot
-      for loot in scene.getPlayerLoot():
+      for loot in scene.getCargo():
         scene.loots.add loot

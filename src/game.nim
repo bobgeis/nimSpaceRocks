@@ -14,6 +14,7 @@ import scene
 import objs/base
 import objs/boom
 import objs/bullet
+import objs/hooligan
 import objs/loot
 import objs/omega
 import objs/particle
@@ -23,14 +24,17 @@ import objs/ship
 
 import interact/baseplayer
 import interact/bulletplayer
+import interact/bullethooligan
 import interact/bulletrock
 import interact/edgeship
-import interact/ui
+import interact/hooliganplayer
+import interact/hooligantimertime
 import interact/lootplayer
 import interact/playerrock
 import interact/rockship
 import interact/rocktimertime
 import interact/shiptimertime
+import interact/ui
 
 
 type
@@ -106,12 +110,17 @@ proc update(scene: var Scene) =
   scene.bases.update()
   scene.particles.update()
   scene.bullets.update()
+  scene.bulletsEvil.update()
+  scene.hooligans.update()
   scene.loots.update()
   scene.rocks.update()
   scene.ships.update()
   scene.player.update()
   # interactions
   scene.interactBulletRock()
+  scene.interactBulletHooligan()
+  scene.interactHooliganPlayer()
+  scene.interactHooliganTimer()
   scene.interactRockTimer()
   scene.interactShipTimer()
   scene.interactEdgeShip()
@@ -144,8 +153,8 @@ proc updateHiScore(game: var Game) =
   ## Update the hiscore using the values from the current scene.
   game.hiscore[0] = max(game.hiscore[0], game.scene.delivered[lkPod])
   game.hiscore[1] = max(game.hiscore[1], game.scene.delivered[lkGem])
-  game.hiscore[2] = max(game.hiscore[2], game.scene.rocksBusted)
-  game.hiscore[3] = max(game.hiscore[3], game.scene.shipsSafe)
+  game.hiscore[2] = max(game.hiscore[2], game.scene.rockScore)
+  game.hiscore[3] = max(game.hiscore[3], game.scene.shipScore)
   try:
     echo "Saving hiscore"
     game.saveHiScore()
@@ -323,6 +332,7 @@ proc init*(game: var Game) =
   base.init()
   boom.init()
   bullet.init()
+  hooligan.init()
   loot.init()
   particle.init()
   player.init()

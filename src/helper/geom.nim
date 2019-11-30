@@ -126,3 +126,7 @@ func cirEdges*(x, y, r: SomeNumber, w, h: SomeNumber): seq[array[2, float]] =
 func cirEdges*[Circle](a: Circle, w, h: SomeNumber): seq[array[2, float]] =
   ## Circle a must have x, y, and r numerical values
   cirEdges(a.x, a.y, a.r, w, h)
+
+proc angleTo*[PointA,PointB](a: PointA, b: PointB):float =
+  ## angle from PointA to PointB
+  angle(b.x - a.x, b.y - a.y)

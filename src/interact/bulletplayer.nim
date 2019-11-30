@@ -12,4 +12,4 @@ proc interactBulletPlayer*(scene: var Scene) =
   if not scene.player.alive: return
   if scene.player.firing and scene.player.cd == 0:
     scene.bullets.createBullets(scene.player, scene.player.multiShots > 0,
-        scene.player.ringShots > 0)
+      scene.player.ringShots > 0)

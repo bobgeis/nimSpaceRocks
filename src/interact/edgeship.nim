@@ -19,5 +19,5 @@ proc interactEdgeShip*(scene: var Scene) =
     if obj.isOffEdge:
       cull.add i
       scene.booms.add newBoom(obj, xkOut, xeClamp)
-      scene.shipsSafe += 1
+      scene.shipScore += 1
   scene.ships.deleteIndices cull

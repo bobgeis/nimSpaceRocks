@@ -104,14 +104,16 @@ func getGlowColors*(ratio: float, hue: float = 180.0): (string, string) =
 const
   numGlowColors* = 16
   step:float = 1 / (numGlowColors-1)
+  hueOfEvil* = 300.0
 
-proc makeDiscreteGlowColors(): array[numGlowColors,(string,string)] =
+proc makeDiscreteGlowColors(hue: float = 180.0): array[numGlowColors,(string,string)] =
   ## make and return the array of discrete glow colors
   for i in 0..<numGlowColors:
-    result[i] = getGlowColors(step * i.float)
+    result[i] = getGlowColors(step * i.float,hue)
 
 let
   discreteGlowColors* = makeDiscreteGlowColors()
+  discreteEvilColors* = makeDiscreteGlowColors(hueOfEvil)
 
 proc ratioToGlowOffset*(ratio:float): int =
   ## get the offset of discreteGlowColor array for the given ratio
