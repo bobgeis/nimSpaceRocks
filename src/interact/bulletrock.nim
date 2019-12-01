@@ -34,14 +34,14 @@ proc interactbulletrock*(scene: var Scene) =
       if cirCollide(rock, bullet):
         cullRocks.add i
         collidedRocks.add rock
-        if not bullet.ring:
+        if bullet.ring != bkRing:
           cullBullets.add j
     # repeat for evil bullets
     for j, bullet in scene.bulletsEvil:
       if cirCollide(rock, bullet):
         cullRocks.add i
         collidedRocks.add rock
-        if not bullet.ring:
+        if bullet.ring != bkRing:
           cullBulletsEvil.add j
   # cull rocks and bullets
   scene.rocks.deleteIndices cullRocks.sorted.deduplicate(true)

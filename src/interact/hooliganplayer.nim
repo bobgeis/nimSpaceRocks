@@ -24,7 +24,7 @@ proc interactHooliganPlayer*(scene: var Scene) =
     hool.a = -hool.angleTo(scene.player)
     if hool.burstShots > 0 and hool.cd == 0:
       scene.bulletsEvil.createBullets(hool, spread=false,
-        ring=false, evil=true)
+        ring=bkNormal, evil=baEvil)
   # collide evil bullets with the player
   for bullet in scene.bulletsEvil:
     if scene.player.cirCollide(bullet) and randf() < deathChance:

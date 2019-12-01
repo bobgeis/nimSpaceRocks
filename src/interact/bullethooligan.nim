@@ -27,7 +27,7 @@ proc interactBulletHooligan*(scene: var Scene) =
       if hool.cirCollide(bullet):
         cullHooligans.add i
         collidedHooligans.add hool
-        if not bullet.ring:
+        if bullet.ring != bkRing:
           cullBullets.add j
   scene.hooligans.deleteIndices cullHooligans.sorted.deduplicate(true)
   scene.bullets.deleteIndices cullBullets.sorted.deduplicate(true)

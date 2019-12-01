@@ -11,11 +11,13 @@ import ../helper/sprite
 import ../common
 
 type
+  BulletKind* = enum bkNormal, bkRing
+  BulletAlignment* = enum baGood, baEvil
   Bullet* = ref object
     x*, y*, a*, vx*, vy*, va*, r*: float
     life*: int
-    ring*: bool
-    evil*: bool
+    ring*: BulletKind
+    evil*: BulletAlignment
 
 const
   daSpread = TAU / 30.0
@@ -30,11 +32,11 @@ let
   imgDims = newImageDimensions(imgRadius * 1.3 * 2.0)
 
 var
-  bulletImgs: array[bool,array[bool,array[numGlowColors,Canvas]]]
+  bulletImgs: array[BulletKind,array[BulletAlignment,array[numGlowColors,Canvas]]]
 
 ## creation
 
-proc newBullet(x, y, vx, vy, a: float, ring: bool = false, evil: bool = false): Bullet =
+proc newBullet(x, y, vx, vy, a: float, ring: BulletKind = bkNormal, evil: BulletAlignment = baGood): Bullet =
   ## given a starting pos & vel, angle, and kind, return a Bullet
   let
     ax = Math.cos(a)
@@ -50,7 +52,7 @@ proc newBullet(x, y, vx, vy, a: float, ring: bool = false, evil: bool = false): 
     )
 
 proc createBullets*[Obj](bullets: var seq[Bullet], obj: Obj,
-    spread: bool = false, ring: bool = false, evil: bool = false) =
+    spread: bool = false, ring: BulletKind = bkNormal, evil: BulletAlignment = baGood) =
   ## create bullets from the obj,
   ## which should have normal object properties: x,y,a and vx,vy,va
   ## the created bullets will be added to the bullets seq
@@ -69,7 +71,7 @@ proc update*(bullet: var Bullet): bool =
   bullet.life -= 1
   bullet.ballistics()
   wrapObj(bullet)
-  if bullet.ring: bullet.r += ringShotGrowth
+  if bullet.ring == bkRing: bullet.r += ringShotGrowth
   return true
 
 ## draw
@@ -88,10 +90,12 @@ proc draw*(ctx: Context, obj: Bullet) =
 
 # init
 
-proc makeBulletImg(i:int,evil=false):Canvas =
+proc makeBulletImg(i:int,aln=baGood):Canvas =
   ## make a basic bullet canvas
   let
-    colors = if not evil: discreteGlowColors[i] else: discreteEvilColors[i]
+    colors = case aln
+      of baGood: discreteGlowColors[i]
+      else: discreteEvilColors[i]
     ctx = createCanvas().getContext()
     w = imgDims.w
     r = imgRadius
@@ -114,10 +118,12 @@ proc makeBulletImg(i:int,evil=false):Canvas =
   # done
   return ctx.canvas
 
-proc makeBursterImg(i:int,evil=false):Canvas =
+proc makeBursterImg(i:int,aln=baGood):Canvas =
   ## make a basic bullet canvas
   let
-    colors = if not evil: discreteGlowColors[i] else: discreteEvilColors[i]
+    colors = case aln
+      of baGood: discreteGlowColors[i]
+      else: discreteEvilColors[i]
     ctx = createCanvas().getContext()
     w = imgDims.w
     r = imgRadius
@@ -145,10 +151,10 @@ proc makeBursterImg(i:int,evil=false):Canvas =
 
 proc init*() =
   ## create bullet canvases
-  for ring in false..true:
-    for evil in false..true:
+  for ring in BulletKind:
+    for evil in BulletAlignment:
       for i in 0..<numGlowColors:
-        if ring == true:
+        if ring == bkRing:
           bulletImgs[ring][evil][i] = makeBursterImg(i,evil)
         else:
           bulletImgs[ring][evil][i] = makeBulletImg(i,evil)
