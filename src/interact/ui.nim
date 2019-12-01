@@ -10,6 +10,22 @@ import ../scene
 import ../objs/base
 import ../objs/loot
 
+proc roundRectPath(ctx:Context, x,y,w,h:float, r: float = 8.0) =
+  ## Use this to make a rect with rounded corners, then fill or stroke as you wish.
+  let
+    a = x + w
+    b = y + h
+  ctx.beginPath()
+  ctx.moveTo(x+r, y)
+  ctx.lineTo(a-r, y)
+  ctx.quadraticCurveTo(a, y, a, y+r)
+  ctx.lineTo(a, y+h-r)
+  ctx.quadraticCurveTo(a, b, a-r, b)
+  ctx.lineTo(x+r, b)
+  ctx.quadraticCurveTo(x, b, x, b-r)
+  ctx.lineTo(x, y+r)
+  ctx.quadraticCurveTo(x, y, x+r, y)
+
 proc drawTextCentered(ctx:Context,x,y:float,str:string, minW=0.0, minH=0.0) =
   ## draw the line of text centered on x,y
   let
@@ -17,7 +33,7 @@ proc drawTextCentered(ctx:Context,x,y:float,str:string, minW=0.0, minH=0.0) =
     h = max(textCharPxheight + 8.0,minH)
   ctx.beginPath()
   ctx.fillStyle = "rgba(0,0,50,0.5)"
-  ctx.rect(x - 0.5*w, y - 0.5*h, w, h)
+  ctx.roundRectPath(x - 0.5*w, y - 0.5*h, w, h)
   ctx.fill
   ctx.fillStyle = "#FFFFFF"
   ctx.fillText str, x, y
@@ -60,7 +76,7 @@ proc drawScore*(ctx: Context, scene: Scene) =
     hRect = yRect + textCharPxHeight * strs.len.float
   ctx.beginPath()
   ctx.fillStyle = "rgba(0,0,50,0.5)"
-  ctx.rect(xRect,yRect,wRect, hRect)
+  ctx.roundRectPath(xRect,yRect,wRect, hRect)
   ctx.fill()
   ctx.closePath()
   ctx.font = commonFontStyle
@@ -89,7 +105,7 @@ proc drawHiScore*(ctx:Context, hiscores = [0,0,0,0]) =
     hRect = yRect + textCharPxHeight * strs.len.float
   ctx.beginPath()
   ctx.fillStyle = "rgba(0,0,50,0.5)"
-  ctx.rect(xRect,yRect,wRect, hRect)
+  ctx.roundRectPath(xRect,yRect,wRect, hRect)
   ctx.fill()
   ctx.font = commonFontStyle
   ctx.fillStyle = "#FFFFFF"
