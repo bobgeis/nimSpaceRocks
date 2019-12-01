@@ -14,8 +14,8 @@ proc interactHooliganTimer*(scene: var Scene) =
     scene.hooliganTimer.prepHooligan(scene.rockScore)
   elif scene.hooliganTimer.incoming:
     scene.hooliganTimer.ticks -= 1
-    if scene.hooliganTimer.ticks == xkEvil.lifetime:
-      scene.booms.add(newBoom(scene.hooliganTimer.hooligan, xkEvil, xeWrap))
+    if scene.hooliganTimer.ticks == xkEvilIn.lifetime:
+      scene.booms.add(newBoom(scene.hooliganTimer.hooligan, xkEvilIn, xeWrap))
   elif scene.hooliganTimer.threshold < scene.rockScore:
     scene.hooliganTimer.incoming = true
 
