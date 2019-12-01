@@ -1,8 +1,6 @@
 ## Interact ships with the edge of the game scene.
 ## When they hit the edge, they should warp out
 
-import algorithm
-
 import ../helper/utils
 
 import ../common

@@ -4,6 +4,7 @@
 # import math
 
 import helper/canvas2d
+import helper/jsrand
 
 import objs/base
 import objs/boom
@@ -63,7 +64,7 @@ proc newScene*(): Scene =
     shipScore: 0,
   )
 
-# query
+# shared scene-level functions
 
 proc sum*(arr:array[LootKind,int]): int =
   ## sum the kinds of loot collected
@@ -78,6 +79,21 @@ proc getCargo*(scene: Scene): seq[Loot] =
     result.add scene.player.newLoot(lkPod)
   for i in 0..<scene.cargo[lkGem]:
     result.add scene.player.newLoot(lkGem)
+
+proc addLoot*(loots: var seq[Loot], obj: Ship) =
+  ## Add loot from a destoyed ship to a seq
+  let
+    (pods,gems) = case obj.kind
+      of skLiner: (4,0)
+      of skMiner: (2,2)
+      of skMedic: (5,0)
+      of skGuild: (2,3)
+      of skScience: (3,3)
+      of skPolice: (5,1)
+  for i in 0..pods.randi():
+    loots.add obj.newLoot(lkPod)
+  for i in 0..gems.randi():
+    loots.add obj.newLoot(lkGem)
 
 # draw
 

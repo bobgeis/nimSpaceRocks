@@ -26,6 +26,7 @@ import interact/baseplayer
 import interact/bulletplayer
 import interact/bullethooligan
 import interact/bulletrock
+import interact/bulletship
 import interact/edgeship
 import interact/hooliganplayer
 import interact/hooligantimertime
@@ -119,6 +120,7 @@ proc update(scene: var Scene) =
   # interactions
   scene.interactBulletRock()
   scene.interactBulletHooligan()
+  scene.interactBulletShip()
   scene.interactHooliganPlayer()
   scene.interactHooliganTimer()
   scene.interactRockTimer()
