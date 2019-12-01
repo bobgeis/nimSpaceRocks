@@ -44,10 +44,12 @@ task serve, "start simple python server":
   exec "(cd public && python -m SimpleHTTPServer)"
 
 task ghpages, "compile prod and push to github pages":
-  exec "git checkout gh-pages"
-  exec "git merge master"
+  exec "git checkout master"
+  exec "git push -d origin gh-pages ; echo 'old remote gh-pages deleted'"
+  exec "git branch -D gh-pages ; echo 'old local gh-pages deleted'"
+  exec "git checkout -b gh-pages"
   exec "nimble prod"
   exec "git add -f public/script.js"
-  exec "git commit -m 'add script.js'"
-  exec "git subtree push --prefix public"
-  exec "git checkout -"
+  exec "git commit -m 'add script.js' ; echo 'new local gh-pages ready'"
+  exec "git subtree push --prefix public origin gh-pages ; echo 'new remote gh-pages pushed'"
+  exec "git checkout master"
