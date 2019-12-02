@@ -14,7 +14,7 @@ import ../objs/particle
 import ../objs/player
 
 const
-  deathChance = 0.3 ## chance for a hooligan shot to kill player
+  deathChance = 0.5 ## chance for a hooligan shot to kill player
 
 proc interactHooliganPlayer*(scene: var Scene) =
   ## Interact hooligans and the player in this scene.
@@ -28,8 +28,13 @@ proc interactHooliganPlayer*(scene: var Scene) =
   for hool in scene.hooligans:
     hool.a = -hool.angleTo(scene.player)
     if hool.burstShots > 0 and hool.cd == 0:
-      scene.bulletsEvil.createBullets(hool, spread=false,
-        ring=bkNormal, evil=baEvil)
+      case hool.kind
+      of hkVandal:
+        scene.bulletsEvil.createBullets(hool, spread=false, ring=bkNormal, evil=baEvil)
+      of hkOri:
+        scene.bulletsEvil.createBullets(hool, spread=false, ring=bkRing, evil=baEvil)
+      of hkTrilobite:
+        scene.bulletsEvil.createBullets(hool, spread=true, ring=bkNormal, evil=baEvil)
   # collide evil bullets with the player
   for bullet in scene.bulletsEvil:
     if scene.player.cirCollide(bullet) and randf() < deathChance:

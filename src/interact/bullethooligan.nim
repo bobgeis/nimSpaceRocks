@@ -16,7 +16,7 @@ import ../objs/loot
 import ../objs/particle
 
 proc interactBulletHooligan*(scene: var Scene) =
-  ## Interact hooligans and the player in this scene.
+  ## Interact hooligans and the existing bullets in this scene
   # collide player bullets with hooligans
   var
     collidedHooligans: seq[Hooligan] = @[]

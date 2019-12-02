@@ -125,9 +125,9 @@ var
   playerFutureImg: Canvas
 
 let
-  playerImgRadius = playerRadius * pixelRatio
-  playerCanvasWidth = playerImgRadius * 1.25 * 2.0
-  playerImgDims = newImageDimensions(playerCanvasWidth)
+  imgRadius = playerRadius * pixelRatio
+  canvasWidth = imgRadius * 1.25 * 2.0
+  imgDims = newImageDimensions(canvasWidth)
 
 proc draw*(ctx: Context, obj: Player) =
   ## draw the player sprite onto the canvas
@@ -135,27 +135,27 @@ proc draw*(ctx: Context, obj: Player) =
   let
     a = obj.a
     img = playerImgs[ratioToGlowOffset(obj.glow.float / glowBang.float)]
-  ctx.drawSprite(img,obj.x,obj.y,a,playerImgDims)
+  ctx.drawSprite(img,obj.x,obj.y,a,imgDims)
   for edge in obj.edgesObj:
-    ctx.drawSprite(img,edge[0], edge[1],a,playerImgDims)
+    ctx.drawSprite(img,edge[0], edge[1],a,imgDims)
 
 proc drawPast*(ctx: Context, obj: Player) =
   if not obj.alive: return
   let
     a = obj.a
     img = playerPastImg
-  ctx.drawSprite(img,obj.x,obj.y,a,playerImgDims)
+  ctx.drawSprite(img,obj.x,obj.y,a,imgDims)
   for edge in obj.edgesObj:
-    ctx.drawSprite(img,edge[0],edge[1],a,playerImgDims)
+    ctx.drawSprite(img,edge[0],edge[1],a,imgDims)
 
 proc drawFuture*(ctx: Context, obj: Player) =
   if not obj.alive: return
   let
     a = obj.a
     img = playerFutureImg
-  ctx.drawSprite(img,obj.x,obj.y,a,playerImgDims)
+  ctx.drawSprite(img,obj.x,obj.y,a,imgDims)
   for edge in obj.edgesObj:
-    ctx.drawSprite(img,edge[0],edge[1],a,playerImgDims)
+    ctx.drawSprite(img,edge[0],edge[1],a,imgDims)
 
 # init
 
@@ -164,8 +164,8 @@ proc makePlayerImg(i:int,colors:(string,string)):Canvas =
   let
     ctx = createCanvas().getContext()
     glowColors = if i == -1: colors else: discreteGlowColors[i]
-    r = playerImgRadius
-    w = playerImgDims.w
+    r = imgRadius
+    w = imgDims.w
   ## set size and translate to the center
   ctx.canvas.width = w
   ctx.canvas.height = w

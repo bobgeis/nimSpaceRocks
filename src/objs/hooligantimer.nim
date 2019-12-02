@@ -1,5 +1,6 @@
 ## This has typs and procs to help deal handle spawning new hooligans.  It needs to be in a separate file from the interact/hooligan
 
+import jscore
 
 import ./hooligan
 
@@ -31,7 +32,7 @@ proc newHooliganTimer*(): HooliganTimer =
 proc prepHooligan*(timer:var HooliganTimer, rockScore: int) =
   ## A hooligan was just released, prep a new one.
   let
-    difficulty = rockScore/100
+    difficulty = Math.sqrt(rockScore.float)/100.0
   timer.hooligan = newHooligan(difficulty)
   timer.spawnCount += 1
   timer.incoming = false

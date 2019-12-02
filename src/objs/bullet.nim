@@ -128,7 +128,7 @@ proc makeBursterImg(i:int,aln=baGood):Canvas =
     w = imgDims.w
     r = imgRadius
     rRing = r * (1.0 - 0.65 * (i/numGlowColors))
-    thickness = r * (0.2 + 0.2 * (i/numGlowColors))
+    thickness = r * (0.3 + 0.1 * (i/numGlowColors))
   #
   ctx.imageSmoothingEnabled = false
   ctx.canvas.width = w

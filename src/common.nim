@@ -93,12 +93,12 @@ func getGlowColors*(ratio: float, hue: float = 180.0): (string, string) =
     hsl(
       hue,
       60 + 40 * ratio,
-      45 + 50 * ratio,
+      55 + 45 * ratio,
   ),
     hsl(
       hue - 20 + 20 * ratio,
       30 + 40 * ratio,
-      40 + 30 * ratio,
+      45 + 35 * ratio,
   ))
 
 const
