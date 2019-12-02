@@ -46,24 +46,24 @@ proc drawScore*(ctx: Context, scene: Scene) =
   ## draw the ui for the given scene
   var strs = @[""]
   strs.add "  Score  "
-  strs.add &"Pods:  {scene.delivered[lkPod]:>4}"
-  strs.add &"Gems:  {scene.delivered[lkGem]:>4}"
-  strs.add &"Rocks: {scene.rockScore:>4}"
-  strs.add &"Ships: {scene.shipScore:>4}"
+  strs.add &"Pods   {scene.delivered[lkPod]:>4}"
+  strs.add &"Gems   {scene.delivered[lkGem]:>4}"
+  strs.add &"Rocks  {scene.rockScore:>4}"
+  strs.add &"Ships  {scene.shipScore:>4}"
   if scene.cargo[lkPod] > 0 or scene.cargo[lkGem] > 0:
     strs.add ""
     strs.add "  Cargo  "
   if scene.cargo[lkPod] > 0:
-    strs.add &"Pods:  {scene.cargo[lkPod]:>4}"
+    strs.add &"Pods   {scene.cargo[lkPod]:>4}"
   if scene.cargo[lkGem] > 0:
-    strs.add &"Gems:  {scene.cargo[lkGem]:>4}"
+    strs.add &"Gems   {scene.cargo[lkGem]:>4}"
   if scene.player.ringShots > 0 or scene.player.multiShots > 0:
     strs.add ""
     strs.add " Powerup "
   if scene.player.ringShots > 0:
-    strs.add &"Ring:  {scene.player.ringShots:>4}"
+    strs.add &"Ring   {scene.player.ringShots:>4}"
   if scene.player.multiShots > 0:
-    strs.add &"Multi: {scene.player.multiShots:>4}"
+    strs.add &"Multi  {scene.player.multiShots:>4}"
   const
     ix = 15.0 + textCharPxWidth * 9.0 * 0.5
     dx = 0.0
@@ -89,10 +89,10 @@ proc drawHiScore*(ctx:Context, hiscores = [0,0,0,0]) =
   ## draw the four high scores, in order: Pods Rescued, Gems Delivered, Rocks Busted, Ships Protected
   var strs = @[""]
   strs.add " HiScore "
-  strs.add &"Pods:  {hiscores[0]:>4}"
-  strs.add &"Gems:  {hiscores[1]:>4}"
-  strs.add &"Rocks: {hiscores[2]:>4}"
-  strs.add &"Ships: {hiscores[3]:>4}"
+  strs.add &"Pods   {hiscores[0]:>4}"
+  strs.add &"Gems   {hiscores[1]:>4}"
+  strs.add &"Rocks  {hiscores[2]:>4}"
+  strs.add &"Ships  {hiscores[3]:>4}"
   const
     ix = 15.0 + textCharPxWidth * 9.0 * 2.0
     dx = 0.0
